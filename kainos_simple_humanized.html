@@ -1,0 +1,327 @@
+<html>
+<head>
+  <title>KAINOS - Public Facility Feedback</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: Arial, sans-serif; color: #222;
+      background: #f7f8f5; line-height: 1.5;
+    }
+    header {
+      background: #fff; padding: 16px 7%; display: flex;
+      justify-content: space-between; align-items: center; gap: 15px;
+      border-bottom: 1px solid #e5e8e1; position: sticky; top: 0;
+    }
+    .logo { font-size: 23px; font-weight: bold; color: #397540; }
+    nav { display: flex; gap: 20px; }
+    nav a { color: #333; text-decoration: none; font-size: 14px; }
+    nav a:hover { color: #315b36; }
+    button {
+      border: 0; background: #315b36; color: white; padding: 11px 17px;
+      border-radius: 7px; cursor: pointer; font-size: 14px;
+    }
+    button:hover { background: #24452a; }
+    .outline { background: white; color: #315b36; border: 1px solid #315b36; }
+    main { max-width: 1100px; margin: auto; padding: 25px 20px 45px; }
+    .hero {
+      background: #e8f0e4; padding: 45px; border-radius: 12px;
+      display: flex; justify-content: space-between; align-items: center; gap: 25px;
+    }
+    .hero h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.15; margin: 8px 0 12px; }
+    .hero p { max-width: 570px; color: #555; margin-bottom: 20px; }
+    .hero-art { font-size: 90px; padding: 15px; }
+    section { margin-top: 35px; }
+    h2 { font-size: 25px; margin: 0 0 7px; }
+    .sub { color: #666; margin: 0 0 18px; font-size: 14px; }
+    .stats, .facilities, .columns { display: grid; gap: 15px; }
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .stat, .facility, .panel {
+      background: white; border: 1px solid #e5e8e1; border-radius: 10px; padding: 18px;
+    }
+    .stat span { display: block; color: #666; font-size: 13px; }
+    .stat strong { display: block; font-size: 28px; margin-top: 5px; color: #315b36; }
+    .facilities { grid-template-columns: repeat(3, 1fr); }
+    .facility .picture { font-size: 42px; background: #edf3e9; text-align: center; padding: 20px; border-radius: 8px; }
+    .facility h3 { margin: 12px 0 4px; font-size: 17px; }
+    .facility p { color: #666; font-size: 13px; margin: 0; }
+    .columns { grid-template-columns: 1.1fr .9fr; }
+    .issue {
+      padding: 13px 0; border-top: 1px solid #eee;
+      display: flex; justify-content: space-between; gap: 12px; align-items: center;
+    }
+    .issue:first-of-type { border-top: 0; }
+    .issue strong { display: block; font-size: 14px; }
+    .issue small { color: #666; display: block; margin-top: 3px; }
+    .issue select { padding: 7px; border: 1px solid #ddd; border-radius: 6px; }
+    .status { font-size: 12px; color: #315b36; margin-top: 5px; }
+    .bar-row { display: flex; align-items: center; gap: 10px; margin: 14px 0; font-size: 13px; }
+    .bar { height: 10px; background: #e8eee5; border-radius: 20px; flex: 1; overflow: hidden; }
+    .bar span { display: block; height: 100%; background: #6d9668; border-radius: 20px; }
+    .callout {
+      margin-top: 35px; background: #315b36; color: white; padding: 25px;
+      border-radius: 10px; display: flex; justify-content: space-between;
+      align-items: center; gap: 15px;
+    }
+    .callout h2 { margin: 0 0 5px; }
+    .callout p { margin: 0; color: #e2ebe0; font-size: 14px; }
+    .callout button { background: white; color: #315b36; white-space: nowrap; }
+    footer { text-align: center; color: #777; font-size: 12px; padding: 25px 10px; }
+    .modal-bg {
+      display: none; position: fixed; inset: 0; background: #0008;
+      align-items: center; justify-content: center; padding: 15px; z-index: 5;
+    }
+    .modal-bg.show { display: flex; }
+    .modal { background: white; width: min(520px, 100%); padding: 24px; border-radius: 12px; max-height: 90vh; overflow: auto; }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; }
+    .modal-head h2 { margin: 0; }
+    .close { background: #eee; color: #333; padding: 5px 11px; font-size: 20px; }
+    form { display: grid; gap: 12px; margin-top: 18px; }
+    label { font-size: 13px; font-weight: bold; }
+    input, select, textarea {
+      width: 100%; padding: 10px; border: 1px solid #d8ddd4;
+      border-radius: 6px; font: inherit; margin-top: 5px;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .stars button { background: #eee; color: #555; padding: 6px 10px; margin-right: 4px; }
+    .stars button.selected { background: #315b36; color: white; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    #message { color: #315b36; font-size: 13px; min-height: 18px; }
+    @media (max-width: 700px) {
+      header { padding: 14px 5%; flex-wrap: wrap; }
+      nav { order: 3; width: 100%; justify-content: space-between; gap: 8px; }
+      nav a { font-size: 12px; }
+      main { padding: 18px 14px 35px; }
+      .hero { padding: 28px 22px; }
+      .hero-art { font-size: 60px; }
+      .stats, .facilities, .columns { grid-template-columns: 1fr; }
+      .callout { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 430px) {
+      .hero-art { display: none; }
+      .hero h1 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">KAINOS</div>
+    <nav>
+      <a href="#facilities">Facilities</a>
+      <a href="#issues">Reported problems</a>
+      <a href="#about">About</a>
+    </nav>
+    <button class="open-form">Give Feedback</button>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <p><strong>A simple way to improve our neighbourhood</strong></p>
+        <h1>Your feedback can make public places better.</h1>
+        <p>Have you noticed a broken light, a dirty park, or something that needs fixing? Share it here. Your feedback can help the people responsible understand what needs attention.</p>
+        <button class="open-form">Share your feedback</button>
+        <a href="#facilities"><button class="outline">View facilities</button></a>
+      </div>
+      <div class="hero-art">🌳</div>
+    </div>
+
+    <section>
+      <h2>Quick Overview</h2>
+      <p class="sub">These are sample details added for this project demo.</p>
+      <div class="stats">
+        <div class="stat"><span>Facilities shown</span><strong>3</strong></div>
+        <div class="stat"><span>Problems still open</span><strong id="openCount">2</strong></div>
+        <div class="stat"><span>Average rating</span><strong>4.6 / 5</strong></div>
+      </div>
+    </section>
+
+    <section id="facilities">
+      <h2>Public Facilities</h2>
+      <p class="sub">Select a place you have visited and tell us about your experience.</p>
+      <div class="facilities">
+        <article class="facility">
+          <div class="picture">🌳</div>
+          <h3>Greenwood Public Park</h3>
+          <p>A place for walking, playing and relaxing.</p>
+        </article>
+        <article class="facility">
+          <div class="picture">📚</div>
+          <h3>City Central Library</h3>
+          <p>A quiet place for reading and studying.</p>
+        </article>
+        <article class="facility">
+          <div class="picture">🏛️</div>
+          <h3>Riverside Community Hall</h3>
+          <p>A space for local meetings and activities.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="columns" id="issues">
+      <div class="panel">
+        <h2>Reported Problems</h2>
+        <p class="sub">See the problems people have reported and update their status in this demo.</p>
+        <div id="issueList">
+          <div class="issue" data-status="open">
+            <div><strong>Park lights are not working</strong><small>The walking path becomes dark in the evening.</small><div class="status">Greenwood Public Park</div></div>
+            <select aria-label="Park light problem status"><option value="open">Open</option><option value="progress">In progress</option><option value="resolved">Resolved</option></select>
+          </div>
+          <div class="issue" data-status="progress">
+            <div><strong>Not enough study seats</strong><small>The library gets crowded in the afternoon.</small><div class="status">City Central Library</div></div>
+            <select aria-label="Library seats problem status"><option value="open">Open</option><option value="progress" selected>In progress</option><option value="resolved">Resolved</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="about">
+        <h2>Why this project?</h2>
+        <p class="sub">KAINOS is a simple public feedback website.</p>
+        <p style="font-size:14px;color:#555">Sometimes people notice problems in parks, libraries and other public places but do not know where to report them. This website gives them one place to share their feedback.</p>
+        <div class="bar-row"><span>Positive feedback</span><div class="bar"><span style="width:72%"></span></div><b>72%</b></div>
+        <p style="font-size:12px;color:#777">The percentage above is only sample data for showing how feedback could be displayed.</p>
+      </div>
+    </section>
+
+    <div class="callout">
+      <div><h2>Have something to share?</h2><p>Tell us what is working well or what needs to improve.</p></div>
+      <button class="open-form">Send Feedback</button>
+    </div>
+  </main>
+
+  <footer>KAINOS Public Facility Feedback System · Student Project Demo</footer>
+
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Share your feedback</h2>
+        <button class="close" id="closeModal" aria-label="Close">×</button>
+      </div>
+      <p class="sub">Fill in the details below. Your name is optional.</p>
+      <form id="feedbackForm">
+        <div><label for="facility">Which place is this about?</label>
+          <select id="facility" required>
+            <option value="">Choose a facility</option>
+            <option>Greenwood Public Park</option>
+            <option>City Central Library</option>
+            <option>Riverside Community Hall</option>
+            <option>Another public place</option>
+          </select>
+        </div>
+        <div><label for="category">What is the feedback about?</label>
+          <select id="category" required>
+            <option value="">Choose one</option>
+            <option>Cleanliness</option><option>Repair or maintenance</option>
+            <option>Safety</option><option>Facilities</option><option>Suggestion</option>
+          </select>
+        </div>
+        <div><label>Your rating</label>
+          <div class="stars" id="stars">
+            <button type="button" data-rating="1">1 ★</button>
+            <button type="button" data-rating="2">2 ★</button>
+            <button type="button" data-rating="3">3 ★</button>
+            <button type="button" data-rating="4">4 ★</button>
+            <button type="button" data-rating="5">5 ★</button>
+          </div>
+        </div>
+        <div><label for="title">Short title</label><input id="title" maxlength="90" placeholder="Example: Dustbin is overflowing" required></div>
+        <div><label for="details">Tell us a little more</label><textarea id="details" maxlength="700" placeholder="Where did you notice it? What should be improved?" required></textarea></div>
+        <div><label for="name">Your name (optional)</label><input id="name" maxlength="50" placeholder="Enter your name"></div>
+        <div id="message" aria-live="polite"></div>
+        <div class="form-actions"><button type="button" class="outline" id="cancel">Cancel</button><button type="submit">Submit</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById("modal");
+    const form = document.getElementById("feedbackForm");
+    const issueList = document.getElementById("issueList");
+    let selectedRating = 0;
+
+    function openForm() { modal.classList.add("show"); }
+    function closeForm() { modal.classList.remove("show"); }
+
+    document.querySelectorAll(".open-form").forEach(button => {
+      button.addEventListener("click", openForm);
+    });
+    document.getElementById("closeModal").addEventListener("click", closeForm);
+    document.getElementById("cancel").addEventListener("click", closeForm);
+    modal.addEventListener("click", event => {
+      if (event.target === modal) closeForm();
+    });
+
+    document.getElementById("stars").addEventListener("click", event => {
+      const button = event.target.closest("[data-rating]");
+      if (!button) return;
+      selectedRating = Number(button.dataset.rating);
+      document.querySelectorAll("#stars button").forEach(star => {
+        star.classList.toggle("selected", Number(star.dataset.rating) <= selectedRating);
+      });
+    });
+
+    function updateOpenCount() {
+      const openIssues = document.querySelectorAll('.issue[data-status="open"], .issue[data-status="progress"]').length;
+      document.getElementById("openCount").textContent = openIssues;
+    }
+
+    issueList.addEventListener("change", event => {
+      if (event.target.tagName !== "SELECT") return;
+      const issue = event.target.closest(".issue");
+      issue.dataset.status = event.target.value;
+      updateOpenCount();
+    });
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const message = document.getElementById("message");
+      if (selectedRating === 0) {
+        message.textContent = "Please select a rating before submitting.";
+        return;
+      }
+
+      const title = document.getElementById("title").value.trim();
+      const details = document.getElementById("details").value.trim();
+      const facility = document.getElementById("facility").value;
+      const category = document.getElementById("category").value;
+
+      const issue = document.createElement("div");
+      issue.className = "issue";
+      issue.dataset.status = "open";
+
+      const info = document.createElement("div");
+      const heading = document.createElement("strong");
+      heading.textContent = title;
+      const description = document.createElement("small");
+      description.textContent = details;
+      const place = document.createElement("div");
+      place.className = "status";
+      place.textContent = facility + " · " + category + " · " + selectedRating + "/5";
+      info.append(heading, description, place);
+
+      const status = document.createElement("select");
+      status.setAttribute("aria-label", "New feedback status");
+      [["open", "Open"], ["progress", "In progress"], ["resolved", "Resolved"]].forEach(optionData => {
+        const option = document.createElement("option");
+        option.value = optionData[0];
+        option.textContent = optionData[1];
+        status.appendChild(option);
+      });
+      status.addEventListener("change", () => {
+        issue.dataset.status = status.value;
+        updateOpenCount();
+      });
+
+      issue.append(info, status);
+      issueList.prepend(issue);
+      updateOpenCount();
+      form.reset();
+      selectedRating = 0;
+      document.querySelectorAll("#stars button").forEach(star => star.classList.remove("selected"));
+      message.textContent = "Thank you! Your feedback has been added to the list.";
+      setTimeout(() => {
+        closeForm();
+        message.textContent = "";
+      }, 1100);
+    });
+  </script>
+</body>
+</html>
